@@ -1,25 +1,25 @@
-library(ggplot2)
-library(data.table)
-library(Biostrings)
-library(plyr)
-library(stringr)
-library(TTR)
-library(dplyr)
+#' Bendability plotting for a list of sequences.
+#'
+#' `Plot()` takes a list of sequences and plots the average bendability scores of a certain amout of randomly selected sequences.
+#'
+#' @param df Dataframe with sequence column.
+#' @param k Number of consecutive trinucleotides to calculate the average from.
+#' @param y (optional) Number of randomly selected sequences from the dataset.
+#'
+#' @return A plot of the average bendability Scores.
+#'
+#' @import ggplot2
+#' @import data.table
+#' @import Biostrings
+#' @import plyr
+#' @import stringr
+#' @import TTR
+#' @import dplyr
+#'
+#' @export
 
-setwd("C:/Users/Michiel/Desktop/Sequences")
 
-##########################################################################
-### Function taking a list of sequences as input and plots the average ###
-###                   bendability per chosen window                    ###                                                ###
-##########################################################################
-
-# df = Dataframe with sequence column
-# k = Number of consecutive trinucleotides to calculate the average from
-# x (optional) = If the dataset is bigger than this number y random sequences are chosen
-# y (optional) = Number of randomly selected sequences from the dataset if dataset is bigger than x
-
-
-Plot <- function(df, k, x=NULL, y=NULL){
+Plot <- function(df, k, y=NULL){
 
   tabel <- fread("table_bendability_UPPERCASE.txt", sep = "\t", header = F)
   tabel <- as.data.table(tabel)
@@ -30,37 +30,35 @@ Plot <- function(df, k, x=NULL, y=NULL){
   df <- as.data.frame(as.character(df$sequence))
   colnames(df) <- "sequence"
 
-  if(!is.null(x) & !is.null(y)){
-    if (nrow(df) > x){
+  if(!is.null(y)){
       df$id <- rownames(df)
       df <- sample_n(df, y)
-    }
   }
-    
+
   Windowmaker <- function(l,k){
-      
+
       st2 <- seq(1, nchar(as.character(l)) - 2)
       en2 <- seq(3, nchar(as.character(l)))
-      
+
       TriNucl <- str_sub(l, st2, en2)
       TriNucl <- as.data.table(TriNucl, sorted = F)
       colnames(TriNucl) <- "Trinucl"
       a <- merge(TriNucl,tabel, by = "Trinucl", sort = F)
       if(k > 1){runMean(a$Score, n = k)[seq(k,length(a$Score),k)]}
       else{return(a$Score)}
-    
+
   }
-  
+
   b <- ldply(lapply(df$sequence, Windowmaker, k = k), rbind)
   rownames(b) <- df$id
   b <- as.data.table(t(b))
   colnames(b) <- gsub("V","",colnames(b))
-  
+
   mlt <- melt(b, measure.vars = colnames(b))
   mlt$id <- rep(1:nrow(b), nrow(mlt)/nrow(b))
-  
-  ggplot(mlt, aes(x = as.factor(id), y = value, group = variable, col = variable)) + 
-    geom_line() + 
+
+  ggplot(mlt, aes(x = as.factor(id), y = value, group = variable, col = variable)) +
+    geom_line() +
     labs(x = "\nWindow", y = "Bendability\n", colour = NULL) +
     ggtitle(paste0("Average bendability with window size: ", k, "\n")) +
     theme(plot.title = element_text(hjust = 0.5, size = 35),

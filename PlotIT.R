@@ -10,7 +10,6 @@ PlotIt <- function(a){
   a$deltaBC <- NULL
   a$strdist <- NULL
   mlt <- melt(a, "sequence")
-
   
   plt <- ggplot(mlt, aes(x = variable, y = as.numeric(as.character(value)), col = sequence, group = sequence)) +
     geom_line() +

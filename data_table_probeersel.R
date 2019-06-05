@@ -1,7 +1,7 @@
 library(ggplot2)
 library(data.table)
 library(Biostrings)
-library(dplyr)
+library(plyr)
 library(stringr)
 library(DECIPHER)
 
@@ -9,26 +9,32 @@ setwd("C:/Users/Michiel/Desktop/Sequences")
 load("example_longerseq.RData")
 
 l <- lapply(l, function(x){as.data.table(x$sequence)})
+l
+k <- list(l[[3]], l[[4]])
+k
 
-func2 <- function(k){
+func <- function(x,y){
+  a <- grep(str_sub(x,nchar(x)-4, nchar(x)), y, value = T)
+  if(length(a) != 0){paste0(str_sub(x,1,nchar(x)-5),a)}
+}
 
-  func <- function(a, b){
-  r <- str_sub(a, start = nchar(a) - 4, end = nchar(a))
-  d <- b[V1 %like% paste0("^",r)]
-  s <- as.data.table(lapply(d, function(x){paste0(str_sub(a,1,nchar(a)-5), x)}))
+func(k[[1]], k[[2]])
 
+func2 <- function(c){
+  
+  func <- function(x,y){
+    a <- grep(str_sub(x,nchar(x)-4, nchar(x)), y, value = T)
+    if(length(a) != 0){paste0(str_sub(x,1,nchar(x)-5),a)}
   }
-
-  k[[1]] <- rbindlist(lapply(k[[1]][,V1], func, b = k[[2]]))
-  k[[1]] <- k[[1]][nchar(V1) == max(nchar(V1))]
-  k[[2]] <- NULL
-  return(k)
+  
+  unlist(lapply(c[[1]],func,y = c[[2]]))
   
 }
 
+func2(k)
 
-while(length(l > 1)){
+while(length(l) > 1){
   l <- func2(l)
-  print(length(l))
+  length(l[[1]])
 }
 

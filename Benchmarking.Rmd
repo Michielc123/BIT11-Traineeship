@@ -1,0 +1,99 @@
+---
+title: "Benchmarking"
+author: "Michiel Coghe"
+date: "4 juni 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, warning = FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+```
+
+# Benchmarking of the different functions in the bendDNA package
+## AllKmerLookup
+### Different lengths of kmer
+
+```{r AllKmerLookup, warning=FALSE, echo=FALSE, comment=FALSE}
+library(bendDNA)
+library(ggplot2)
+library(microbenchmark)
+library(Biostrings)
+
+a <- microbenchmark(AllKmerLookup("dnase", 1),
+                    AllKmerLookup("dnase", 2),
+                    AllKmerLookup("dnase", 3),
+                    AllKmerLookup("dnase", 4),
+                    AllKmerLookup("dnase", 5),
+                    AllKmerLookup("dnase", 6),
+                    AllKmerLookup("dnase", 7),
+                    AllKmerLookup("dnase", 8),
+                    times = 20)
+
+autoplot(a)
+print(a)
+
+```
+
+### Sequence Out
+
+```{r qsdljf1, warning=FALSE} 
+
+a <- microbenchmark(AllKmerLookup("dnase", 1),
+                    AllKmerLookup("dnase", 1, sequence.out = TRUE),
+                    AllKmerLookup("dnase", 2),
+                    AllKmerLookup("dnase", 2, sequence.out = TRUE),
+                    AllKmerLookup("dnase", 3),
+                    AllKmerLookup("dnase", 3, sequence.out = TRUE),
+                    AllKmerLookup("dnase", 4),
+                    AllKmerLookup("dnase", 4, sequence.out = TRUE),
+                    AllKmerLookup("dnase", 5),
+                    AllKmerLookup("dnase", 5, sequence.out = TRUE),
+                    times = 20)
+
+autoplot(a)
+print(a)
+
+```
+
+## BendabilityProfile
+
+
+```{r qsdljf2, warning=FALSE} 
+
+setwd("C:/Users/Michiel/Desktop/Sequences")
+fasta <- readDNAStringSet("BRAF.txt", format = "fasta")
+
+a <- microbenchmark(BendabilityProfile(fasta, "nuc", 3),
+                    BendabilityProfile(fasta, "nuc", 4),
+                    BendabilityProfile(fasta, "nuc", 5),
+                    BendabilityProfile(fasta, "nuc", 6),
+                    BendabilityProfile(fasta, "nuc", 7),
+                    BendabilityProfile(fasta, "nuc", 8),
+                    BendabilityProfile(fasta, "nuc", 9),
+                    times = 20)
+
+autoplot(a)
+print(a)
+
+```
+
+## MatchBendability
+
+```{r qsdljf3, warning=FALSE} 
+
+sequences <- "ATCGTAGCTAGTCAGTCAGCTGA"
+
+a <- microbenchmark(PlotBendability(sequences, "nuc", 3, smt = 0),
+                    PlotBendability(sequences, "nuc", 4, smt = 0),
+                    PlotBendability(sequences, "nuc", 5, smt = 0),
+                    PlotBendability(sequences, "nuc", 5, smt = 0.3),
+                    PlotBendability(sequences, "nuc", 5, smt = 0.6),
+                    PlotBendability(sequences, "nuc", 5, smt = 0.9),
+                    times = 20)
+
+autoplot(a)
+print(a)
+
+```
+

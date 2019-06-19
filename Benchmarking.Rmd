@@ -8,27 +8,63 @@ output: pdf_document
 ```{r setup, include=FALSE, warning = FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(message = FALSE)
-```
 
-# Benchmarking of the different functions in the bendDNA package
-## AllKmerLookup
-### Different lengths of kmer
-
-```{r AllKmerLookup, warning=FALSE, echo=FALSE, comment=FALSE}
 library(bendDNA)
 library(ggplot2)
 library(microbenchmark)
 library(Biostrings)
 
-a <- microbenchmark(AllKmerLookup("dnase", 1),
-                    AllKmerLookup("dnase", 2),
-                    AllKmerLookup("dnase", 3),
-                    AllKmerLookup("dnase", 4),
-                    AllKmerLookup("dnase", 5),
-                    AllKmerLookup("dnase", 6),
-                    AllKmerLookup("dnase", 7),
-                    AllKmerLookup("dnase", 8),
+```
+
+# Benchmarking of the different functions in the bendDNA package
+
+In this R Markdown file all the different functions included in the bendDNA package are benchmarked. This will be done by looking at every function individually, testing and timing the functions for different parameter values. 
+
+The testing is done x times (depending on which function) and summary statistics are given in a summary table. These are then plotted using violin plots comparing every different parameter value. The CRAN microbenchmark package is used for making both the summary table and plot.
+
+
+## AllKmerLookup
+
+Function for producing all possible k-mers and calculating their average bendability coefficients.
+
+Usage: AllKmerLookup(scale, k, sequence.out = F)
+
+Parameters that can be used include:
+  - Scale
+  - Number of consecutive trinucleotides
+  - Whether to output the sequences
+
+
+### Different lookup tables
+
+```{r AllKmerLookup tables, warning=FALSE, echo=FALSE, comment=FALSE}
+
+a <- microbenchmark(AllKmerLookup("dnase", 4),
+                    AllKmerLookup("dnaserigid", 4),
+                    AllKmerLookup("con", 4),
+                    AllKmerLookup("conrigid", 4),
+                    AllKmerLookup("nuc", 4),
+                    AllKmerLookup("nucrigid", 4),
                     times = 20)
+
+autoplot(a)
+print(a)
+
+```
+
+### Number of consecutive trinucleotides
+
+```{r AllKmerLookup kmer, warning=FALSE, echo=FALSE, comment=FALSE}
+
+a <- microbenchmark(AllKmerLookup("con", 1),
+                    AllKmerLookup("con", 2),
+                    AllKmerLookup("con", 3),
+                    AllKmerLookup("con", 4),
+                    AllKmerLookup("con", 5),
+                    AllKmerLookup("con", 6),
+                    AllKmerLookup("con", 7),
+                    AllKmerLookup("con", 8),
+                    times = 50)
 
 autoplot(a)
 print(a)
@@ -37,59 +73,103 @@ print(a)
 
 ### Sequence Out
 
-```{r qsdljf1, warning=FALSE} 
+```{r AllKmerLookup seq_out, warning=FALSE} 
 
-a <- microbenchmark(AllKmerLookup("dnase", 1),
-                    AllKmerLookup("dnase", 1, sequence.out = TRUE),
-                    AllKmerLookup("dnase", 2),
-                    AllKmerLookup("dnase", 2, sequence.out = TRUE),
-                    AllKmerLookup("dnase", 3),
-                    AllKmerLookup("dnase", 3, sequence.out = TRUE),
-                    AllKmerLookup("dnase", 4),
-                    AllKmerLookup("dnase", 4, sequence.out = TRUE),
-                    AllKmerLookup("dnase", 5),
-                    AllKmerLookup("dnase", 5, sequence.out = TRUE),
+a <- microbenchmark(AllKmerLookup("con", 1),
+                    AllKmerLookup("con", 1, sequence.out = TRUE),
+                    AllKmerLookup("con", 2),
+                    AllKmerLookup("con", 2, sequence.out = TRUE),
+                    AllKmerLookup("con", 3),
+                    AllKmerLookup("con", 3, sequence.out = TRUE),
+                    AllKmerLookup("con", 4),
+                    AllKmerLookup("con", 4, sequence.out = TRUE),
+                    AllKmerLookup("con", 5),
+                    AllKmerLookup("con", 5, sequence.out = TRUE),
                     times = 20)
 
 autoplot(a)
 print(a)
 
 ```
+
+
+\pagebreak
 
 ## BendabilityProfile
 
+Splits sequence into k-mers with two-nucleotide overlap and calculates average bendability per k-mer according to the chosen scale.
 
-```{r qsdljf2, warning=FALSE} 
+Parameters that can be used include:
+  - Scale
+  - Number of consecutive trinucleotides
 
-setwd("C:/Users/Michiel/Desktop/Sequences")
-fasta <- readDNAStringSet("BRAF.txt", format = "fasta")
+### Scale
 
-a <- microbenchmark(BendabilityProfile(fasta, "nuc", 3),
+```{r BendabilityProfile_scale, warning=FALSE} 
+
+fasta <- "ATGACTGAATATAAACTTGTGGTAGTTGGAGCTGGTGGCGTAGGCAAGAGTGCCTTGACGATACAGCTAATTCAGAATATTTTGTGGACGAATATGATCCAACAATAGAGGATTCCTACAGGAAGCAAGTAGTAATTGATGGAGAAACCTGTCTCTTGGATATTCTCGACACAGCAGGTCAAGAGGAGTACAGTGCAATGAGGGACCAGTACATGAGGACTGGGGAGGGCTTTCTTTGTGTATTTGCCATAAATAATACTAAATCATTTGAAGATATTCACCATTATAGAGAACAAATTAAAAGAGTTAAGGACTCTGAAGATGTACCTATGGTCCTAGTAGGAAATAAATGTGATTTGCCTTCTAGAACAGTAGACACAAAACAGGCTCAGGACTTAGCAAGAAGTTATGGAATTCCTTTTATTGAAACATCACAAAGACAAGACAGAGAGTGGAGGATGCTTTTTATACATTGGTGAGAGAGATCCGACAATACAGATTGAAAAAAATCAGCAAAGAAGAAAAGACTCCTGGCTGTGTGAAAATTAAAAAATGCATTATAATGTAA"
+
+a <- microbenchmark(BendabilityProfile(fasta, "dnase", 4),
+                    BendabilityProfile(fasta, "dnaserigid", 4),
+                    BendabilityProfile(fasta, "con", 4),
+                    BendabilityProfile(fasta, "conrigid", 4),
                     BendabilityProfile(fasta, "nuc", 4),
-                    BendabilityProfile(fasta, "nuc", 5),
-                    BendabilityProfile(fasta, "nuc", 6),
-                    BendabilityProfile(fasta, "nuc", 7),
-                    BendabilityProfile(fasta, "nuc", 8),
-                    BendabilityProfile(fasta, "nuc", 9),
+                    BendabilityProfile(fasta, "nucrigid", 4),
                     times = 20)
 
 autoplot(a)
 print(a)
 
 ```
+
+### Number of consecutive trinucleotides
+
+```{r BendabilityProfile_kmer, warning=FALSE} 
+
+fasta <- "ATGACTGAATATAAACTTGTGGTAGTTGGAGCTGGTGGCGTAGGCAAGAGTGCCTTGACGATACAGCTAATTCAGAATATTTTGTGGACGAATATGATCCAACAATAGAGGATTCCTACAGGAAGCAAGTAGTAATTGATGGAGAAACCTGTCTCTTGGATATTCTCGACACAGCAGGTCAAGAGGAGTACAGTGCAATGAGGGACCAGTACATGAGGACTGGGGAGGGCTTTCTTTGTGTATTTGCCATAAATAATACTAAATCATTTGAAGATATTCACCATTATAGAGAACAAATTAAAAGAGTTAAGGACTCTGAAGATGTACCTATGGTCCTAGTAGGAAATAAATGTGATTTGCCTTCTAGAACAGTAGACACAAAACAGGCTCAGGACTTAGCAAGAAGTTATGGAATTCCTTTTATTGAAACATCACAAAGACAAGACAGAGAGTGGAGGATGCTTTTTATACATTGGTGAGAGAGATCCGACAATACAGATTGAAAAAAATCAGCAAAGAAGAAAAGACTCCTGGCTGTGTGAAAATTAAAAAATGCATTATAATGTAA"
+
+a <- microbenchmark(BendabilityProfile(fasta, "con", 3),
+                    BendabilityProfile(fasta, "con", 4),
+                    BendabilityProfile(fasta, "con", 5),
+                    BendabilityProfile(fasta, "con", 6),
+                    BendabilityProfile(fasta, "con", 7),
+                    BendabilityProfile(fasta, "con", 8),
+                    BendabilityProfile(fasta, "con", 9),
+                    times = 20)
+
+autoplot(a)
+print(a)
+
+```
+
+\pagebreak
+
+
 
 ## MatchBendability
 
-```{r qsdljf3, warning=FALSE} 
+Calculates bendability profile of query sequence and finds all other sequences which have similar (or same) profile.
 
-sequences <- "ATCGTAGCTAGTCAGTCAGCTGA"
+Parameters that can be used include:
+  - Scale
+  - Number of consecutive trinucleotides
+  - Tolerance
+  - wsize
+  - output.list
+  - random.out
 
-a <- microbenchmark(PlotBendability(sequences, "nuc", 3, smt = 0),
-                    PlotBendability(sequences, "nuc", 4, smt = 0),
-                    PlotBendability(sequences, "nuc", 5, smt = 0),
-                    PlotBendability(sequences, "nuc", 5, smt = 0.3),
-                    PlotBendability(sequences, "nuc", 5, smt = 0.6),
-                    PlotBendability(sequences, "nuc", 5, smt = 0.9),
+### Scale
+
+```{r MatchBendability_scale, warning=FALSE} 
+
+fasta <- "ATCGTAGCTAGTCAGTCAGCTGA"
+
+a <- microbenchmark(MatchBendability(fasta, "dnase", 3, 0.01, wsize = NULL),
+                    MatchBendability(fasta, "dnaserigid", 3, 0.01, wsize = NULL),
+                    MatchBendability(fasta, "con", 3, 0.01, wsize = NULL),
+                    MatchBendability(fasta, "conrigid", 3, 0.01, wsize = NULL),
+                    MatchBendability(fasta, "nuc", 3, 0.01, wsize = NULL),
+                    MatchBendability(fasta, "nucrigid", 3, 0.01, wsize = NULL),
                     times = 20)
 
 autoplot(a)
@@ -97,3 +177,139 @@ print(a)
 
 ```
 
+### Number of consecutive sequences
+
+```{r MatchBendability_kmer, warning=FALSE} 
+
+fasta <- "ATCGTAGCTAGTCAGTCAGCTGA"
+
+a <- microbenchmark(MatchBendability(fasta, "con", 1, 0.01, wsize = NULL),
+                    MatchBendability(fasta, "con", 2, 0.01, wsize = NULL),
+                    MatchBendability(fasta, "con", 3, 0.01, wsize = NULL),
+                    MatchBendability(fasta, "con", 4, 0.01, wsize = NULL),
+                    MatchBendability(fasta, "con", 5, 0.01, wsize = NULL),
+                    MatchBendability(fasta, "con", 6, 0.01, wsize = NULL),
+                    times = 15)
+
+autoplot(a)
+print(a)
+
+```
+
+### Tolerance
+
+```{r MatchBendability_tolerance, warning=FALSE} 
+
+fasta <- "ATCGTAGCTAGTCAGTCAGCTGA"
+
+a <- microbenchmark(MatchBendability(fasta, "con", 3, 0.01, wsize = NULL),
+                    MatchBendability(fasta, "con", 3, 0.05, wsize = NULL),
+                    MatchBendability(fasta, "con", 3, 0.1, wsize = NULL),
+                    MatchBendability(fasta, "con", 3, 0.15, wsize = NULL),
+                    times = 10)
+
+autoplot(a)
+print(a)
+
+```
+
+### Window size
+
+```{r MatchBendability_wsize, warning=FALSE} 
+
+fasta <- "ATCGTAGCTAGTCAGTCAGCTGAACTAGGAGTCGATAGCATGCATAGCATCAGCATGACTAGT"
+
+a <- microbenchmark(MatchBendability(fasta, "con", 3, 0.03, wsize = NULL, output.list = F),
+                    MatchBendability(fasta, "con", 3, 0.03, wsize = 8, output.list = F),
+                    MatchBendability(fasta, "con", 3, 0.03, wsize = 11, output.list = F),
+                    MatchBendability(fasta, "con", 3, 0.03, wsize = 14, output.list = F),
+                    MatchBendability(fasta, "con", 3, 0.03, wsize = 17, output.list = F),
+                    MatchBendability(fasta, "con", 3, 0.03, wsize = 20, output.list = F),
+                    times = 30)
+
+autoplot(a)
+print(a)
+
+```
+
+### Output List
+
+```{r MatchBendability_output_list, warning=FALSE} 
+
+fasta <- "ATCGTAGCTAGTCAGTCAGCTGAACTAGGAGTCGATAGCATGCATAGCATCAGCATGACTAGT"
+
+a <- microbenchmark(MatchBendability(fasta, "con", 3, 0.05, wsize = 20, output.list = T),
+                    MatchBendability(fasta, "con", 3, 0.05, wsize = 20, output.list = F),
+                    MatchBendability(fasta, "con", 3, 0.05, wsize = 17, output.list = T),
+                    MatchBendability(fasta, "con", 3, 0.05, wsize = 17, output.list = F),
+                    MatchBendability(fasta, "con", 3, 0.05, wsize = 14, output.list = T),
+                    MatchBendability(fasta, "con", 3, 0.05, wsize = 14, output.list = F),
+                    times = 20)
+
+autoplot(a)
+print(a)
+
+```
+
+### Random Out
+
+```{r MatchBendability_random_out, warning=FALSE} 
+
+fasta <- "ATCGTAGCTAGTCAGTCAGCTGAACTAGGAGTCGATAGCATGCATAGCATCAGCATGACTAGT"
+
+a <- microbenchmark(MatchBendability(fasta, "con", 3, 0.05, wsize = 20, output.list = F, random.out = T),
+                    MatchBendability(fasta, "con", 3, 0.05, wsize = 20, output.list = F, random.out = F),
+                    MatchBendability(fasta, "con", 3, 0.05, wsize = 17, output.list = F, random.out = T),
+                    MatchBendability(fasta, "con", 3, 0.05, wsize = 17, output.list = F, random.out = F),
+                    MatchBendability(fasta, "con", 3, 0.05, wsize = 14, output.list = F, random.out = T),
+                    MatchBendability(fasta, "con", 3, 0.05, wsize = 14, output.list = F, random.out = F),
+                    times = 20)
+
+autoplot(a)
+print(a)
+
+```
+
+## ClusterAndConsensus
+
+Intended to present output of function MatchBendability in a more human-friendly format. The output can contain very large numbers of highly similar sequences, so clustering and calculating a consensus can help provide a clearer picture. DISCLAIMER: due to the nature of bendability problem and limitations of IUPAC extended genetic alphabet, output of this function is not intended for further machine use. Not all sequences which can be inferred from consensus output will have satisfied the initial bendability requirements (for example AA/TT will be marked as WW, same as AT/TA).
+
+Parameters that can be used include:
+  - Cutoff
+  - sample.seq
+  
+### Cutoff
+
+```{r ClusterAndConsensus_cutoff, warning=FALSE} 
+
+fasta <- "TGATTCCTAAAGTCA"
+list <- MatchBendability(fasta, "con", 3, 0.05, wsize = NULL, output.list = F)
+
+a <- microbenchmark(ClusterAndConsensus(list, cutoff=0.01),
+                    ClusterAndConsensus(list, cutoff=0.05),
+                    ClusterAndConsensus(list, cutoff=0.1),
+                    ClusterAndConsensus(list, cutoff=0.25),
+                    ClusterAndConsensus(list, cutoff=0.5),
+                    times = 20)
+
+autoplot(a)
+print(a)
+
+```
+
+### Sample.seq
+
+```{r ClusterAndConsensus_sample_seq, warning=FALSE} 
+
+fasta <- "TGATTCCTAAAGTCA"
+list <- MatchBendability(fasta, "con", 3, 0.05, wsize = NULL, output.list = F)
+
+a <- microbenchmark(ClusterAndConsensus(list, cutoff=0.5, sample.seq = 5),
+                    ClusterAndConsensus(list, cutoff=0.5, sample.seq = 10),
+                    ClusterAndConsensus(list, cutoff=0.5, sample.seq = 20),
+                    times = 20)
+
+autoplot(a)
+print(a)
+
+```

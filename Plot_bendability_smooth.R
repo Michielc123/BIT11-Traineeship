@@ -41,9 +41,6 @@ PlotBendability <- function(sequences, scale, k, sample.seq=NULL, r) {
   mat <- sapply(sq, Yaxis, k)
   colnames(mat) <- index
   melted <- melt(mat, measure.vars = colnames(mat))
-  print(class(melted))
-  print(class(melted$Var1))
-  print(class(melted$value))
   melted$Var2 <- as.factor(melted$Var2)
   
   ggplot(melted, aes(x = Var1, y = value, group = Var2, col = Var2)) + 

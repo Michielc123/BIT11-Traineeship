@@ -122,6 +122,6 @@ library(stringr)
 
     ggsave(paste0(gsub(".*","",mf),".pdf"))
 
-    return(list("graph" = plt, "table" = as.data.frame(bend_per_gene)))
+  return(list("graph" = plt, "table" = as.data.frame(bend_per_gene)))
 
   }

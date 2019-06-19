@@ -1,3 +1,5 @@
+# Function to save a plot of sequences showing the average bendability of sequence per position
+
 library(ggplot2)
 library(data.table)
 library(Biostrings)

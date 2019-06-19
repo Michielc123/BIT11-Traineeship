@@ -1,3 +1,6 @@
+# Function used to merge a list of dataframes consisting of small sequences. Merging only the the ones who overlap.
+# Making use of a different approach
+
 library(ggplot2)
 library(data.table)
 library(Biostrings)

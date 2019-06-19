@@ -1,3 +1,5 @@
+# Function to convert IUPAC named sequences into every single possible combination
+
 IUPAC <- function(fasta){
 
   code <- c("y", "r", "w", "s", "k", "m", "b", "d", "h", "v", "n", "x")

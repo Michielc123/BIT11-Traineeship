@@ -1,3 +1,7 @@
+
+# Function for clustering similar sequences and finding a IUPAC consensus per cluster
+# Output: list
+
 Consensus_list_vector <- function(list, cutoff){
 
   Consensus <- function(mf, cutoff){

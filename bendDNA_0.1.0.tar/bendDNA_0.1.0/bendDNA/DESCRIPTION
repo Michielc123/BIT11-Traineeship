@@ -1,0 +1,18 @@
+Package: bendDNA
+Type: Package
+Title: Bendability Profile Of DNA Sequence
+Version: 0.1.0
+Author: Dunja, Michiel
+Maintainer: Dunja Glavas <dglavas@bioinfo.hr>
+Description: Calculates and plots bendability profile of a DNA
+    sequence. Finds all other sequences which have similar bendability
+    profiles.
+License: For internal use
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Imports: arrangements, Biostrings, caTools, data.table, DECIPHER,
+        ggformula, ggplot2, stringr
+NeedsCompilation: no
+Packaged: 2019-05-31 14:07:17 UTC; Bioinfo
+Depends: R (>= 3.5.0)

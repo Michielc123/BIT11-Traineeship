@@ -1,0 +1,8 @@
+export("BendScoresGraph_stringr")
+
+import(ggplot2)
+import(data.table)
+import(Biostrings)
+import(plyr)
+import(stringr)
+importMethodsFrom(GenomicRanges, as.data.frame)

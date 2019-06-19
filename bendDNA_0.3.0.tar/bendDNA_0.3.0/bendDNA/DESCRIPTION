@@ -1,0 +1,19 @@
+Package: bendDNA
+Type: Package
+Title: Sequence-dependent DNA Bendability
+Version: 0.3.0
+Author: Dunja Glavaš, Michiel Coghe
+Maintainer: Dunja Glavaš <dglavas@bioinfo.hr>
+Description: Calculates and plots bendability profile of a DNA
+    sequence. Finds all other sequences which have similar bendability
+    profiles.
+License: LGPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Depends: R (>= 3.5.0)
+Imports: arrangements (>= 1.1.5), Biostrings (>= 2.52.0), data.table
+        (>= 1.12.2), DECIPHER (>= 2.12.0), ggformula (>= 0.9.1),
+        ggplot2 (>= 3.1.1), stringr (>= 1.4.0)
+NeedsCompilation: no
+Packaged: 2019-06-06 09:04:05 UTC; Bioinfo

@@ -1,3 +1,7 @@
+
+# Function used to merge a list of dataframes consisting of small sequences. Merging only the the ones who overlap.
+# Output: List of all possible sequences with a 2 nucleotide overlap
+
 library(ggplot2)
 library(data.table)
 library(Biostrings)
